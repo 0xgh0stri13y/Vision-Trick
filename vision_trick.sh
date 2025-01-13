@@ -20,7 +20,6 @@ check_discord_webhook() {
         exit 1
     fi
 
-    # Update the post.php file with the provided webhook URL
     sed -i "s|https://discord.com/api/webhooks/your_webhook_url_here|$discord_webhook_url|g" post.php
     printf "\e[1;92m[\e[0m+\e[1;92m] Discord webhook URL updated successfully!\e[0m\n"
 }
