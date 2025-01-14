@@ -6,8 +6,8 @@ Capture images from the target's phone front camera or PC webcam and send the im
 - **Discord Integration**: Automatically uploads captured images to a Discord channel using a webhook.
 
 ## Setup:
-1. Replace `YOUR_DISCORD_WEBHOOK_URL_HERE` in `post.php` with your actual Discord webhook URL.
-2. Run the tool as usual.
+1. Make Your Discord webhook URL.
+2. Make your ngrok token
 
 ## Usage:
 ```bash
