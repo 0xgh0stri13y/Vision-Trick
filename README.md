@@ -1,6 +1,6 @@
 # 🎯 VisionTrick v1.1
 
-**VisionTrick** is a powerful and versatile phishing tool designed to capture IP addresses and images from targets. With seamless Telegram integration, it sends captured data directly to your Telegram channel, making it an essential tool for penetration testers, security researchers, and ethical hackers.
+**VisionTrick** is a powerful and versatile phishing simulation tool designed to capture IP addresses and images from targets. With seamless Telegram integration, it sends captured data directly to your Telegram channel, making it an essential tool for penetration testers, security researchers, and ethical hackers.
 
 ---
 
