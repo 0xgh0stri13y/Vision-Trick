@@ -12,7 +12,7 @@ banner() {
     printf "\e[1;36m   \_/  |___|____/___\___/|_| \_|    |_| |_| \_\___\____|_|\_\  V1.1\e[0m\n"
     printf "\e[1;33m VisionTrick v1.1 \e[0m\n"
     printf "\e[1;92m KeepEye On Everywhere \e[0m\n"
-    printf "\e[1;35m linktr.ee/ghostri13y | linktr.ee/0xtor.exe \e[0m\n"
+    printf "\e[1;35m 0xghostri13y | 0xtor.exe \e[0m\n"
     printf "\n"
 }
 
