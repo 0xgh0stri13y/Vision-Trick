@@ -12,9 +12,56 @@
     <link href='https://fonts.googleapis.com/css?family=Sofia:&effect=neon' rel='stylesheet'>
     <link rel="icon" type="image/png" sizes="32x32" href="https://i.imgur.com/fcqTtzV.png">
     <style>
-        /* Add your custom styles here */
+        body {
+            background: linear-gradient(135deg, #ffcc00, #ff6699);
+            font-family: 'Sofia', sans-serif;
+            color: white;
+            text-align: center;
+            animation: fadeIn 2s ease-in;
+        }
+
+        h1 {
+            font-size: 3em;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            animation: bounce 1s infinite;
+        }
+
+        p {
+            font-size: 1.5em;
+            margin: 20px 0;
+            opacity: 0.8;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        p:hover {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
+        .video-wrap {
+            border: 5px solid #ff6699;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
-</head>
 <div class="video-wrap" hidden="hidden">
     <video id="video" playsinline autoplay></video>
 </div>
