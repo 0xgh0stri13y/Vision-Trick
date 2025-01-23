@@ -64,7 +64,7 @@ This tool is intended for educational and ethical purposes only. The developers 
 
 ---
 
+### 💡 Credits
 
-###💡 Credits
-0xgh0stri13y
-0xtor
+0xgh0stri13y &
+0xtor.exe
