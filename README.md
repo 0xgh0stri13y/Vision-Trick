@@ -9,7 +9,7 @@
 - **🌐 IP Address Capture**: Automatically captures the IP address of the target when they open the phishing link.
 - **📸 Image Capture**: Captures images from the target's device (if they grant access).
 - **🤖 Telegram Integration**: Sends captured images directly to your Telegram channel using a bot.
-- **🎭 Multiple Templates**: Offers customizable phishing templates:
+- **🎭 Multiple Templates**: Offers customizable phishing simulation templates:
   - 🎉 Festival Wishing
   - 📺 Live YouTube TV
   - 🖥️ Online Meeting
