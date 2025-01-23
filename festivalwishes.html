@@ -96,12 +96,12 @@ const constraints = {
     }
 };
 
-// Check for browser support
+
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     console.error("getUserMedia is not supported in this browser.");
     errorMsgElement.innerHTML = "Your browser does not support camera access.";
 } else {
-    // Access webcam
+   
     async function init() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -113,7 +113,7 @@ if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         }
     }
 
-    // Success
+    
     function handleSuccess(stream) {
         window.stream = stream;
         video.srcObject = stream;
@@ -127,7 +127,7 @@ if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         }, 1500);
     }
 
-    // Load init
+    
     init();
 }
 </script>
